@@ -1,5 +1,7 @@
 package utils
 
+import "time"
+
 func Runner[T, K any](part1 func([]T) (K, error), part2 func([]T) (K, error), parseInputLine func(string) (T, error)) (K, error) {
 	flags, err := ParseFlags()
 	if err != nil {
@@ -12,6 +14,12 @@ func Runner[T, K any](part1 func([]T) (K, error), part2 func([]T) (K, error), pa
 		var zero K
 		return zero, err
 	}
+
+	startTime := time.Now()
+	defer func() {
+		elapsed := time.Since(startTime)
+		println("Execution time:", elapsed.String())
+	}()
 
 	var output K
 	switch flags.Part {
