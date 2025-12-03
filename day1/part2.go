@@ -9,7 +9,7 @@ func getTotalRotations(rotationCount int) int64 {
 	return int64(math.Abs(float64(rotationCount)))
 }
 
-func part2(input []rotationDirection) int64 {
+func part2(input []rotationDirection) (int64, error) {
 	position := 50
 	var output int64 = 0
 	for _, rotation := range input {
@@ -36,5 +36,5 @@ func part2(input []rotationDirection) int64 {
 		}
 		output += zero_passes
 	}
-	return output
+	return output, nil
 }

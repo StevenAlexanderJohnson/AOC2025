@@ -1,6 +1,6 @@
 package main
 
-func part1(input []rotationDirection) int64 {
+func part1(input []rotationDirection) (int64, error) {
 	position := 50
 	var output int64 = 0
 	for _, rotation := range input {
@@ -21,5 +21,5 @@ func part1(input []rotationDirection) int64 {
 			output++
 		}
 	}
-	return output
+	return output, nil
 }
