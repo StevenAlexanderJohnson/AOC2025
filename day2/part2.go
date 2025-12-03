@@ -57,12 +57,12 @@ func findWindow(ids uint64) uint64 {
 	return 0
 }
 
-func part2(input []IDRange) uint64 {
+func part2(input []IDRange) (uint64, error) {
 	var output uint64
 	for _, ids := range input {
 		for id := ids.Start; id <= ids.End; id++ {
 			output += findWindow(id)
 		}
 	}
-	return output
+	return output, nil
 }

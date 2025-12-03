@@ -6,25 +6,9 @@ import (
 )
 
 func main() {
-	flags, err := utils.ParseFlags()
-	if err != nil {
+	if output, err := utils.Runner(part1, part2, parseInput); err != nil {
 		panic(err)
+	} else {
+		fmt.Println(output)
 	}
-
-	input, err := utils.ReadInputFile(flags.InputPath, parseInput)
-	if err != nil {
-		panic(err)
-	}
-
-	var result uint64
-	switch flags.Part {
-	case 1:
-		result = part1(input)
-	case 2:
-		result = part2(input)
-	default:
-		panic("invalid part provided or not implemented")
-	}
-
-	fmt.Println(result)
 }
