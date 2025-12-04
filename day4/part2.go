@@ -4,8 +4,9 @@ func part2(input [][]rune) (uint64, error) {
 	board := board(input)
 	var output uint64 = 0
 
+	removeIndicies := make([][2]int, 0)
 	for {
-		removeIndicies := make([][2]int, 0)
+		removeIndicies = removeIndicies[:0]
 
 		for r := range input {
 			for c := range input[r] {
