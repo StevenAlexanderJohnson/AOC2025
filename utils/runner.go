@@ -38,3 +38,20 @@ func Runner[T, K any](part1 func([]T) (K, error), part2 func([]T) (K, error), pa
 
 	return output, nil
 }
+
+func FuncRunner[T, K any](part func(T) (K, error), input T) (K, error) {
+	startTime := time.Now()
+	defer func() {
+		elapsed := time.Since(startTime)
+		println("Execution time:", elapsed.String())
+	}()
+
+	var output K
+	output, err := part(input)
+	if err != nil {
+		var zero K
+		return zero, err
+	}
+
+	return output, nil
+}
