@@ -23,13 +23,10 @@ func part2(diagram *diagram) (uint64, error) {
 
 		currentChar := diagram.board[pos.y][pos.x]
 		switch currentChar {
-		case 'S':
+		case 'S', '.':
 			nextPositions = append(nextPositions, position{x: pos.x, y: pos.y + 1})
 		case '^':
 			nextPositions = append(nextPositions, position{x: pos.x + 1, y: pos.y}, position{x: pos.x - 1, y: pos.y})
-		case '.':
-			diagram.board[pos.y][pos.x] = '|' // Mark as visited
-			nextPositions = append(nextPositions, position{x: pos.x, y: pos.y + 1})
 		}
 
 		var result uint64 = 0
