@@ -5,14 +5,14 @@ import (
 	"slices"
 )
 
-func part1(pq *minHeap) (uint64, error) {
+func part1(pq *minHeap, iterationCount int) (uint64, error) {
 	// This tracks if the point ID has been seen and which circuit it belongs to
 	seen := make(map[int]int)
 	// This tracks the circuit IDs and their associated point IDs
 	circuitIds := make(map[int][]int)
 	newCircuitId := 0
 
-	for range 10 {
+	for range iterationCount {
 		if pq.len() == 0 {
 			return 0, fmt.Errorf("ran out of elements in pq")
 		}
@@ -50,6 +50,5 @@ func part1(pq *minHeap) (uint64, error) {
 	slices.Sort(largestIds)
 	n := len(largestIds)
 	output := uint64(largestIds[n-1]) * uint64(largestIds[n-2]) * uint64(largestIds[n-3])
-	fmt.Println(largestIds)
 	return output, nil
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"slices"
 )
 
@@ -43,7 +42,6 @@ func newMinHeap(tree *kdTree, points []point3D) *minHeap {
 func (h *minHeap) pop() heapItem {
 	item := h.heap[0]
 	h.heap = h.heap[1:]
-	fmt.Println(item)
 
 	newNeighborA := h.tree.nearestNeighbor(item.pointA, h.excludeMap[item.pointA.id])
 	h.excludeMap[item.pointA.id][newNeighborA.id] = true
