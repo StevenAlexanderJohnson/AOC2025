@@ -35,7 +35,17 @@ func main() {
 			return part1(heap, iterations)
 		}, pq)
 	case 2:
-		panic("part 2 not implemented yet")
+		result, err = utils.FuncRunner(func(heap *minHeap) (uint64, error) {
+			lookupId := func(id int) point3D {
+				for _, p := range input {
+					if p.id == id {
+						return p
+					}
+				}
+				panic("id not found")
+			}
+			return part2(heap, lookupId)
+		}, pq)
 	default:
 		panic("invalid part specified")
 	}

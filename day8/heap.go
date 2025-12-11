@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"slices"
 )
 
@@ -26,10 +27,13 @@ func newMinHeap(tree *kdTree, points []point3D) *minHeap {
 	}
 	for _, point := range points {
 		closestNeighbor := tree.nearestNeighbor(point, h.excludeMap[point.id])
-		dist := euclideanDistance(point, closestNeighbor)
+		if closestNeighbor == nil {
+			continue
+		}
+		dist := euclideanDistance(point, *closestNeighbor)
 		h.push(heapItem{
 			pointA:   point,
-			pointB:   closestNeighbor,
+			pointB:   *closestNeighbor,
 			distance: dist,
 		})
 		h.excludeMap[point.id][closestNeighbor.id] = true
@@ -44,16 +48,19 @@ func (h *minHeap) pop() heapItem {
 	h.heap = h.heap[1:]
 
 	newNeighborA := h.tree.nearestNeighbor(item.pointA, h.excludeMap[item.pointA.id])
-	h.excludeMap[item.pointA.id][newNeighborA.id] = true
-	h.excludeMap[newNeighborA.id][item.pointA.id] = true
-	distA := euclideanDistance(item.pointA, newNeighborA)
-	h.push(heapItem{
-		pointA:   item.pointA,
-		pointB:   newNeighborA,
-		distance: distA,
-	})
+	if newNeighborA != nil {
+		h.excludeMap[item.pointA.id][newNeighborA.id] = true
+		h.excludeMap[newNeighborA.id][item.pointA.id] = true
+		distA := euclideanDistance(item.pointA, *newNeighborA)
+		h.push(heapItem{
+			pointA:   item.pointA,
+			pointB:   *newNeighborA,
+			distance: distA,
+		})
+	}
 
 	h.minify()
+	fmt.Printf("Heap Size: %d\r", len(h.heap))
 	return item
 }
 

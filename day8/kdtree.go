@@ -62,10 +62,10 @@ func (n *kdTreeNode) insert(point point3D, depth int) {
 	}
 }
 
-func (n *kdTreeNode) nearestSearch(target point3D, depth int, exclude map[int]bool) (bestPoint point3D, bestDistSqrt float64) {
+func (n *kdTreeNode) nearestSearch(target point3D, depth int, exclude map[int]bool) (bestPoint *point3D, bestDistSqrt float64) {
 	bestDistSqrt = math.MaxFloat64
 	if n == nil || n.point3D == nil {
-		return point3D{}, bestDistSqrt
+		return nil, bestDistSqrt
 	}
 
 	isSelf := (n.point3D.id == target.id)
@@ -75,7 +75,7 @@ func (n *kdTreeNode) nearestSearch(target point3D, depth int, exclude map[int]bo
 		currentDistSq := euclideanDistance(*n.point3D, target)
 		if currentDistSq < bestDistSqrt {
 			bestDistSqrt = currentDistSq
-			bestPoint = *n.point3D
+			bestPoint = n.point3D
 		}
 	}
 
@@ -127,9 +127,9 @@ type kdTree struct {
 	root *kdTreeNode
 }
 
-func (t *kdTree) nearestNeighbor(target point3D, exclude map[int]bool) point3D {
+func (t *kdTree) nearestNeighbor(target point3D, exclude map[int]bool) *point3D {
 	if t.root == nil || t.root.point3D == nil {
-		return point3D{}
+		return nil
 	}
 
 	bestPoint, _ := t.root.nearestSearch(target, 0, exclude)
