@@ -62,9 +62,10 @@ func (n *kdTreeNode) insert(point point3D, depth int) {
 	}
 }
 
-func (n *kdTreeNode) nearestSearch(target point3D, depth int, bestPoint **point3D, bestDistSqrt *float64, exclude map[int]bool) {
-	if n == nil {
-		return
+func (n *kdTreeNode) nearestSearch(target point3D, depth int, exclude map[int]bool) (bestPoint point3D, bestDistSqrt float64) {
+	bestDistSqrt = math.MaxFloat64
+	if n == nil || n.point3D == nil {
+		return point3D{}, bestDistSqrt
 	}
 
 	isSelf := (n.point3D.id == target.id)
@@ -72,9 +73,9 @@ func (n *kdTreeNode) nearestSearch(target point3D, depth int, bestPoint **point3
 
 	if !isSelf && !isExcluded {
 		currentDistSq := euclideanDistance(*n.point3D, target)
-		if currentDistSq < *bestDistSqrt {
-			*bestDistSqrt = currentDistSq
-			*bestPoint = n.point3D
+		if currentDistSq < bestDistSqrt {
+			bestDistSqrt = currentDistSq
+			bestPoint = *n.point3D
 		}
 	}
 
@@ -101,28 +102,37 @@ func (n *kdTreeNode) nearestSearch(target point3D, depth int, bestPoint **point3
 		secondaryBranch = n.left
 	}
 
-	primaryBranch.nearestSearch(target, depth+1, bestPoint, bestDistSqrt, exclude)
+	if primaryBranch != nil {
+		pBest, pDist := primaryBranch.nearestSearch(target, depth+1, exclude)
+		if pDist < bestDistSqrt {
+			bestDistSqrt = pDist
+			bestPoint = pBest
+		}
+	}
 
 	planeDist := queryVal - nodeVal
 	planeDistSq := planeDist * planeDist
 
-	if planeDistSq < *bestDistSqrt {
-		secondaryBranch.nearestSearch(target, depth+1, bestPoint, bestDistSqrt, exclude)
+	if planeDistSq < bestDistSqrt {
+		sBest, sDist := secondaryBranch.nearestSearch(target, depth+1, exclude)
+		if sDist < bestDistSqrt {
+			bestDistSqrt = sDist
+			bestPoint = sBest
+		}
 	}
+	return bestPoint, bestDistSqrt
 }
 
 type kdTree struct {
 	root *kdTreeNode
 }
 
-func (t *kdTree) nearestNeighbor(target point3D, exclude map[int]bool) *point3D {
+func (t *kdTree) nearestNeighbor(target point3D, exclude map[int]bool) point3D {
 	if t.root == nil || t.root.point3D == nil {
-		return nil
+		return point3D{}
 	}
-	bestPoint := t.root.point3D
-	bestDistSqrt := math.MaxFloat64
 
-	t.root.nearestSearch(target, 0, &bestPoint, &bestDistSqrt, exclude)
+	bestPoint, _ := t.root.nearestSearch(target, 0, exclude)
 	return bestPoint
 }
 
