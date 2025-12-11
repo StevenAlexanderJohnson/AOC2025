@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"slices"
 )
 
@@ -23,13 +24,9 @@ func newMinHeap(tree *kdTree, points []point3D) *minHeap {
 	}
 	for _, point := range points {
 		h.excludeMap[point.id] = map[int]bool{point.id: true}
+	}
+	for _, point := range points {
 		closestNeighbor := tree.nearestNeighbor(point, h.excludeMap[point.id])
-		h.excludeMap[point.id][closestNeighbor.id] = true
-		if _, ok := h.excludeMap[closestNeighbor.id]; !ok {
-			h.excludeMap[closestNeighbor.id] = make(map[int]bool)
-		} else {
-			h.excludeMap[closestNeighbor.id][point.id] = true
-		}
 		if closestNeighbor != nil {
 			dist := euclideanDistance(point, *closestNeighbor)
 			h.push(heapItem{
@@ -37,7 +34,11 @@ func newMinHeap(tree *kdTree, points []point3D) *minHeap {
 				pointB:   *closestNeighbor,
 				distance: dist,
 			})
+		} else {
+			fmt.Println("NO NEW NEIGHBOR FOR", point.id)
 		}
+		h.excludeMap[point.id][closestNeighbor.id] = true
+		h.excludeMap[closestNeighbor.id][point.id] = true
 	}
 	h.minify()
 	return h
@@ -46,9 +47,8 @@ func newMinHeap(tree *kdTree, points []point3D) *minHeap {
 func (h *minHeap) pop() heapItem {
 	item := h.heap[0]
 	h.heap = h.heap[1:]
+	fmt.Println(item)
 
-	h.excludeMap[item.pointA.id][item.pointB.id] = true
-	h.excludeMap[item.pointB.id][item.pointA.id] = true
 	newNeighborA := h.tree.nearestNeighbor(item.pointA, h.excludeMap[item.pointA.id])
 	if newNeighborA != nil {
 		h.excludeMap[item.pointA.id][newNeighborA.id] = true
@@ -59,6 +59,8 @@ func (h *minHeap) pop() heapItem {
 			pointB:   *newNeighborA,
 			distance: distA,
 		})
+	} else {
+		fmt.Println("NO NEW NEIGHBOR FOR", item.pointA.id)
 	}
 
 	h.minify()
